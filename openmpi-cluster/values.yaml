@@ -1,0 +1,61 @@
+# Default values for openmpi-cluster.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: skabrits/openmpi
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "0.1.0"
+  
+sharedVolume:
+  enabled: true
+  storageClass: longhorn-v2-data-engine
+  size: 10Gi
+  accessModes:
+    - ReadWriteMany
+
+settings:
+  taskMultiplier: 1
+  # command: ["/bin/bash", "-c"]
+  # args:
+  #   - curl https://examle.com/enviroment.zip -o enviroment.zip && \
+  #     unzip enviroment.zip -d /cloud && \
+  #     mpirun -hostfile /tools/hosts /cloud/Task.bin
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

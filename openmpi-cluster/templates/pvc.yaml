@@ -1,0 +1,15 @@
+{{- if .Values.sharedVolume.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "openmpi-cluster.fullname" . }}
+spec:
+  {{- with .Values.sharedVolume.accessModes }}
+  accessModes:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  storageClassName: {{ .Values.sharedVolume.storageClass }}
+  resources:
+    requests:
+      storage: {{ .Values.sharedVolume.size }}
+{{- end }}
