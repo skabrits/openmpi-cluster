@@ -1,3 +1,7 @@
+{{- $NFS_MODE := "OFF" -}}
+{{- if not .Values.sharedVolume.enabled }}
+  {{- $NFS_MODE := "ON" }}
+{{- end}}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -67,7 +71,7 @@ spec:
             - name: NODE_NUM
               value: {{ .Values.replicaCount | quote }}
             - name: NFS_MODE
-              value: {{ if not .Values.sharedVolume.enabled }}ON{{ else }}OFF{{ end }}
+              value: {{ $NFS_MODE }}
             - name: TASK_MULTIPLIER
               value: {{ .Values.settings.taskMultiplier | quote }}
             - name: SERVICE_NAME
