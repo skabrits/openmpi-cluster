@@ -65,11 +65,11 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
             - name: NODE_NUM
-              value: {{ .Values.replicaCount }}
+              value: {{ .Values.replicaCount | quote }}
             - name: NFS_MODE
               value: {{ if not .Values.sharedVolume.enabled }}ON{{ else }}OFF{{ end }}
             - name: TASK_MULTIPLIER
-              value: {{ .Values.settings.taskMultiplier }}
+              value: {{ .Values.settings.taskMultiplier | quote }}
             - name: SERVICE_NAME
               value: {{ include "openmpi-cluster.fullname" . }}
           volumeMounts:
