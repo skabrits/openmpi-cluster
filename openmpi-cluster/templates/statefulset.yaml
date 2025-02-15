@@ -71,7 +71,7 @@ spec:
             - name: NODE_NUM
               value: {{ .Values.replicaCount | quote }}
             - name: NFS_MODE
-              value: {{ $NFS_MODE }}
+              value: {{ $NFS_MODE | quote }}
             - name: TASK_MULTIPLIER
               value: {{ .Values.settings.taskMultiplier | quote }}
             - name: SERVICE_NAME
