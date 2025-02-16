@@ -16,6 +16,13 @@ sharedVolume:
   size: 10Gi
   accessModes:
     - ReadWriteMany
+    
+sharedMemory:
+  enabled: true
+  storageClass: longhorn-v2-data-engine
+  size: 2Gi
+  accessModes:
+    - ReadWriteMany
 
 settings:
   taskMultiplier: 1

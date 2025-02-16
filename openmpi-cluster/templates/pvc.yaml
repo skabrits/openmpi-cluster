@@ -13,3 +13,21 @@ spec:
     requests:
       storage: {{ .Values.sharedVolume.size }}
 {{- end }}
+{{- if and .Values.sharedMemory.enabled .Values.sharedVolume.enabled }}
+---
+{{- end }}
+{{- if .Values.sharedMemory.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "openmpi-cluster.fullname" . }}-dshm
+spec:
+  {{- with .Values.sharedMemory.accessModes }}
+  accessModes:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  storageClassName: {{ .Values.sharedMemory.storageClass }}
+  resources:
+    requests:
+      storage: {{ .Values.sharedMemory.size }}
+{{- end }}

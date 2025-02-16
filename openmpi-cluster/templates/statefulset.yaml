@@ -76,9 +76,17 @@ spec:
               value: {{ .Values.settings.taskMultiplier | quote }}
             - name: SERVICE_NAME
               value: {{ include "openmpi-cluster.fullname" . }}
+          {{- if or .Values.sharedVolume.enabled .Values.sharedMemory.enabled }}
           volumeMounts:
+          {{- end }}
+          {{- if .Values.sharedVolume.enabled }}
           - name: shared-storage
             mountPath: /cloud
+          {{- end }}
+          {{- if .Values.sharedMemory.enabled }}
+          - name: dshm
+            mountPath: /dev/shm
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
@@ -99,7 +107,16 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if or .Values.sharedVolume.enabled .Values.sharedMemory.enabled }}
       volumes:
+      {{- end }}
+      {{- if .Values.sharedVolume.enabled }}
       - name: shared-storage
         persistentVolumeClaim:
           claimName: {{ include "openmpi-cluster.fullname" . }}
+      {{- end }}
+      {{- if .Values.sharedMemory.enabled }}
+      - name: dshm
+        persistentVolumeClaim:
+          claimName: {{ include "openmpi-cluster.fullname" . }}-dshm
+      {{- end }}
