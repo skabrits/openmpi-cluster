@@ -19,7 +19,7 @@ sharedVolume:
     
 sharedMemory:
   enabled: true
-  storageClass: longhorn-v2-data-engine
+  storageClass: "none"
   size: 2Gi
   accessModes:
     - ReadWriteMany
