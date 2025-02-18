@@ -158,7 +158,6 @@ spec:
       {{- end }}
       {{- if .Values.sharedMemory.enabled }}
       - name: dshm
-      {{- end }}
         {{- if eq .Values.sharedMemory.storageClass "none" }}
         emptyDir:
           medium: "Memory"
@@ -167,3 +166,4 @@ spec:
         persistentVolumeClaim:
           claimName: {{ include "openmpi-cluster.fullname" . }}-dshm
         {{- end }}
+      {{- end }}
