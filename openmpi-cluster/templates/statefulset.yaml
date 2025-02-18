@@ -37,16 +37,22 @@ spec:
             - -c
             - |
               cp /etc/hosts /hosts/hosts
+              echo "$NODE_NAME ${SERVICE_NAME} $NODE_NUM"
               for i in $(seq 0 $((NODE_NUM - 1)))
               do
+                echo "$NODE_NAME ${SERVICE_NAME} $NODE_NUM $i"
                 if [ $NODE_NUM -eq 1 ]
                 then
                   host=$NODE_NAME
                   fhost=$NODE_NAME
+                  echo "$NODE_NAME ${SERVICE_NAME} $NODE_NUM $i"
+                  echo "no case $host $fhost"
                 else
                   host="${NODE_NAME%-*}-${i}"
                   fhost="${NODE_NAME%-*}-${i}.${SERVICE_NAME}"
                   fhost=${host%.}
+                  echo "$NODE_NAME ${SERVICE_NAME} $NODE_NUM $i"
+                  echo "the case $host $fhost"
                 fi
                 
                 host_ip=`ping  -c1 ${fhost} | head -n 1 | awk '{print $3}' | tr -d '():'`
