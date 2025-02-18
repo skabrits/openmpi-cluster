@@ -66,6 +66,8 @@ spec:
                   fieldPath: metadata.name
             - name: NODE_NUM
               value: {{ .Values.replicaCount | quote }}
+            - name: SERVICE_NAME
+              value: {{ include "openmpi-cluster.fullname" . }}
           volumeMounts:
             - name: etc-hosts-volume
               mountPath: /hosts
