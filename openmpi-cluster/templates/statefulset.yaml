@@ -31,7 +31,7 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       initContainers:
         - name: init-etc-hosts
-          image: busybox:1.28
+          image: ubuntu
           command:
             - sh
             - -c
@@ -49,7 +49,7 @@ spec:
                   fhost=${fhost%.}
                 fi
                 
-                host_ip=`ping  -c1 ${fhost} | head -n 1 | awk '{print $3}' | tr -d '():'`
+                host_ip=`getent hosts ${fhost} | awk '{ print $1 ; exit }'`
                 
                 echo "${host_ip} ${host}" >> /hosts/hosts
               done
