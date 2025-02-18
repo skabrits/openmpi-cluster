@@ -29,6 +29,46 @@ spec:
       {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: init-etc-hosts
+          image: busybox:1.28
+          command:
+            - sh
+            - -c
+            - |
+              cp /etc/hosts /hosts/hosts
+              for i in $(seq 0 $((NODE_NUM - 1)))
+              do
+                if [ $NODE_NUM -eq 1 ]
+                then
+                  host=$NODE_NAME
+                  fhost=$NODE_NAME
+                else
+                  host="${NODE_NAME%-*}-${i}"
+                  fhost="${NODE_NAME%-*}-${i}.${SERVICE_NAME}"
+                  fhost=${host%.}
+                fi
+                
+                host_ip=`ping  -c1 ${fhost} | head -n 1 | awk '{print $3}' | tr -d '():'`
+                
+                echo "${host_ip} ${host}" >> /hosts/hosts
+              done
+          env:
+            - name: CPU_LIMIT
+              valueFrom:
+                resourceFieldRef:
+                  containerName: openmpi
+                  resource: limits.cpu
+                  divisor: "0"
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NODE_NUM
+              value: {{ .Values.replicaCount | quote }}
+          volumeMounts:
+            - name: etc-hosts-volume
+              mountPath: /hosts
       containers:
         - name: openmpi
           securityContext:
@@ -76,9 +116,10 @@ spec:
               value: {{ .Values.settings.taskMultiplier | quote }}
             - name: SERVICE_NAME
               value: {{ include "openmpi-cluster.fullname" . }}
-          {{- if or .Values.sharedVolume.enabled .Values.sharedMemory.enabled }}
           volumeMounts:
-          {{- end }}
+          - name: etc-hosts-volume
+            mountPath: /etc/hosts
+            subPath: hosts
           {{- if .Values.sharedVolume.enabled }}
           - name: shared-storage
             mountPath: /cloud
@@ -107,9 +148,9 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if or .Values.sharedVolume.enabled .Values.sharedMemory.enabled }}
       volumes:
-      {{- end }}
+      - name: etc-hosts-volume
+        emptyDir: {}
       {{- if .Values.sharedVolume.enabled }}
       - name: shared-storage
         persistentVolumeClaim:
